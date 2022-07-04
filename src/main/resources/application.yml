@@ -1,0 +1,45 @@
+server:
+  port: ${GATEWAY_PORT}
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone : ${EUREKA_DEFAULT_ZONE}
+
+spring:
+  application:
+    name: rollin-gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+            allowed-origins:
+              - "http://localhost:3000"
+            allowed-headers: "*"
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user/**
+#          filters:
+#            - CustomAuthFilter
+
+        - id: paper-service
+          uri: lb://PAPER-service
+          predicates:
+            - Path=/paper/**
+          filters:
+            - CustomAuthFilter
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, httptrace
