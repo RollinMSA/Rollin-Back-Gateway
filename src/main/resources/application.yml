@@ -1,12 +1,12 @@
 server:
-  port: ${GATEWAY_PORT}
+  port: 8000
 
 eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone : ${EUREKA_DEFAULT_ZONE}
+      defaultZone : http://127.0.0.1:8761/eureka
 
 spring:
   application:
@@ -29,15 +29,32 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user/**
-#          filters:
-#            - CustomAuthFilter
+          filters:
+            - CustomFilter
 
         - id: paper-service
-          uri: lb://PAPER-service
+          uri: lb://PAPER-SERVICE
           predicates:
             - Path=/paper/**
           filters:
-            - CustomAuthFilter
+            - CustomFilter
+            - AuthFilter
+
+        - id: board-service
+          uri: lb://BOARD-SERVICE
+          predicates:
+            - Path= /board/**,/upload
+          filters:
+            - CustomFilter
+            - AuthFilter
+
+        - id: gift-service
+          uri: lb://GIFT-SERVICE
+          predicates:
+            - Path=/gift/**, /mail/**
+          filters:
+            - CustomFilter
+            - AuthFilter
 management:
   endpoints:
     web:
