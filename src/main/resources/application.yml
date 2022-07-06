@@ -29,28 +29,32 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user/**
-#          filters:
-#            - CustomAuthFilter
+          filters:
+            - CustomFilter
 
         - id: paper-service
           uri: lb://PAPER-SERVICE
           predicates:
             - Path=/paper/**
           filters:
-#            - CustomAuthFilter
-        - id: gift-service
-          uri: lb://GIFT-SERVICE
-          predicates:
-            - Path=/gift/**, /mail/**
+            - CustomFilter
+            - AuthFilter
 
         - id: board-service
           uri: lb://BOARD-SERVICE
           predicates:
-            - Path=/board/**, /upload/**
-        - id: comment-service
-          uri: lb://COMMENT-SERVICE
+            - Path= /board/**,/upload
+          filters:
+            - CustomFilter
+            - AuthFilter
+
+        - id: gift-service
+          uri: lb://GIFT-SERVICE
           predicates:
-            - Path=/comment/**
+            - Path=/gift/**, /mail/**
+          filters:
+            - CustomFilter
+            - AuthFilter
 management:
   endpoints:
     web:
