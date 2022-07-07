@@ -29,11 +29,13 @@ public class RollinGatewayApplication {
     public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultCustomizer() {
         return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
                 .circuitBreakerConfig(CircuitBreakerConfig.custom()
-                        .slidingWindowSize(100)
+                        .slidingWindowSize(10)
+                        .permittedNumberOfCallsInHalfOpenState(5)
                         .failureRateThreshold(50.0f)
-                        .waitDurationInOpenState(Duration.ofMillis(30000))
+                        .waitDurationInOpenState(Duration.ofSeconds(30))
+                        .minimumNumberOfCalls(5)
                         .build())
-                .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofMillis(200)).build())
+                .timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofMillis(5000)).build())
                 .build());
     }
 }

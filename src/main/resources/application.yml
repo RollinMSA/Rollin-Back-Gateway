@@ -38,10 +38,10 @@ spring:
           predicates:
             - Path=/paper/**
           filters:
-#            - name: CircuitBreaker
-#              args:
-#                name: myCircuitBreaker
-#                fallbackUri: forward:/inCaseOfFailureUseThis
+            - name: CircuitBreaker
+              args:
+                name: paperGatewayService
+                fallbackUri: forward:/paper-fallback
             - CustomFilter
 #            - AuthFilter
 
