@@ -32,13 +32,18 @@ spring:
           filters:
             - CustomFilter
 
+
         - id: paper-service
           uri: lb://PAPER-SERVICE
           predicates:
             - Path=/paper/**
           filters:
+#            - name: CircuitBreaker
+#              args:
+#                name: myCircuitBreaker
+#                fallbackUri: forward:/inCaseOfFailureUseThis
             - CustomFilter
-            - AuthFilter
+#            - AuthFilter
 
         - id: board-service
           uri: lb://BOARD-SERVICE
@@ -55,8 +60,38 @@ spring:
           filters:
             - CustomFilter
             - AuthFilter
+        - id: comment
+          uri: lb://COMMENT
+          predicates:
+            - Path=/comment/**
+          filters:
+            - CustomFilter
+            - AuthFilter
 management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, httptrace
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+    health: #actuator로 정보 확인
+      show-details: always
+  health: #actuator로 cb 상태 확인
+    circuitbreakers:
+      enabled: true
+#resilience4j
+#resilience4j:
+#  circuitbreaker:
+#    configs:
+#      default:
+#        sliding-window-size: 100 # 슬라이딩 윈도우 개수
+#        permitted-number-of-calls-in-half-open-state: 10 # 회로가 half-open일때 요청의 최대 타임아웃
+#        wait-duration-in-open-state: 60000 # 회로가 open 에서 half-open으로 전환되기 까지의 대기 시간
+#        failure-rate-threshold: 50 # 실패 비율의 threshold
+#        event-consumer-buffer-size: 10 # 이벤트 발생시 버퍼에 저장될 크기
+#        register-health-indicator: true # actuator를 통한 상태 확인
+#        minimumNumberOfCalls: 10 # 최소수행 call 개수
+#    instances:
+#      paper-service:
+#        base-config: default
